@@ -69,8 +69,6 @@ Accedo al instalador desde el navegador
 ```
 http://localhost:8080/mediawiki-1.37.2/
 ```
-
-
 Usuario: user
 Contraseña: alumno2022
 Una vez finalizada la instalación descargo el archivo de configuración LocalSettings.php y lo muevo a su ubicación definitiva
@@ -95,6 +93,10 @@ python3 -m venv env
 Activo el entorno virtual
 ```
 source env/bin/activate
+```
+Instalo las dependencias
+```
+pip install -r requirements.txt
 ```
 Instalo el servidor web gunicorn
 ```
@@ -146,21 +148,35 @@ En el directorio donde están todos los servicios:
 /etc/systemd/system/
 ```
 Creo uno nuevo servicio llamado temperaturas.service con la siguiente configuración:
+```
+Description=gunicorn daemon
+[Service]
+User=vagrant
+Group=vagrant
+WorkingDirectory=/home/vagrant/bluelog/
 
-
-
-
-
-
-
+ExecStart=/home/vagrant/bluelog/env/bin/gunicorn \
+    --workers=4 \
+    --bind=127.0.0.1:8080 \
+    --log-file=/home/vagrant/bluelog/gunicorn.log \
+    wsgi:app
+    
+[Install]
+WantedBy=multi-user.target
+```
+Habilito el servicio creado y lo inicio
+```
+sudo systemctl enable bluelog
+sudo systemctl start bluelog
+```
 Cambio la configuración de vagrant y reinicio la máquina virtual para que todos los accesos sean a través de apache
 ```
 config.vm.network "forwarded_port", guest: 80, host: 8000
 ```
-
-
-
-
+Reinicio vagrant y compruebo que funciona en la dirección
+```
+http://blog.miempresa.com:8000/
+```
 
 
 
