@@ -78,4 +78,94 @@ Una vez finalizada la instalación descargo el archivo de configuración LocalSe
 sudo mv LocalSettings.php /var/www/html/mediawiki-1.37.2/
 ```
 Entro en la wiki para comprobar que funciona y accedo con el usuario creado
+## Web 2: Instalación de un blog (blueblog)
+### Poner en marcha gunicorn con un entorno virtual
+En /home/vagrant/ clono el repositorio
+```
+git clone https://github.com/lmorillas/bluelog.git
+```
+Instalo el paquete python3.8-venv
+```
+sudo apt install python3.8-venv
+```
+Preparo la máquina virtual para entornos de python. En el directorio del proyecto clonado /home/vagrant/bluelog: Creo un entorno virtual
+```
+python3 -m venv env
+```
+Activo el entorno virtual
+```
+source env/bin/activate
+```
+Instalo el servidor web gunicorn
+```
+pip install gunicorn
+```
+### Conectar como un proxy gunicorn con Apache
+Para hacerlo proxy: Habilito los módulos proxy y reinicio apache
+```
+sudo a2enmod proxy proxy_http
+sudo systemcyl restart apache2
+```
+Creo un virtual host con la directriz ProxyPass, indicando que todo lo que vaya a la raíz lo coja apache del puerto 8080 que es donde sirve gunicorn
+Configuro el sitio para que los datos de los estáticos no los sirva gunicorn y los sirva directamente apache añadiendo la directriz:
+```
+ProxyPass /static/ !
+Alias /static/ /home/vagrant/flask_temperaturas/static
+```
+También hay que dar permisos al directorio
+```
+<Directory /home/vagrant/flask_temperaturas/static>
+    Require all granted
+</Directory>
+```
+El virtualhost queda de la siguiente manera:
+```
+<VirtualHost *:80>
+        ServerName blog.miempresa.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /home/vagrant/bluelog/
+        
+        ProxyPass /static/ !
+        ProxyPass / http://localhost:8080/
+        Alias /static/ /home/vagrant/bluelog/static
+        
+        <Directory /home/vagrant/bluelog/static>
+            Require all granted
+        </Directory>
+</VirtualHost>
+```
+Habilito el sitio y reinicio apache
+```
+sudo a2ensite bluelog.conf
+sudo systemctl reload apache2
+```
+## Programar un servicio
+En el directorio donde están todos los servicios:
+```
+/etc/systemd/system/
+```
+Creo uno nuevo servicio llamado temperaturas.service con la siguiente configuración:
+
+
+
+
+
+
+
+Cambio la configuración de vagrant y reinicio la máquina virtual para que todos los accesos sean a través de apache
+```
+config.vm.network "forwarded_port", guest: 80, host: 8000
+```
+
+
+
+
+
+
+
+
+
+
+
 
