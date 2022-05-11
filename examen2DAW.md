@@ -69,8 +69,20 @@ Accedo al instalador desde el navegador
 ```
 http://localhost:8080/mediawiki-1.37.2/
 ```
+Se abre la página de inicio del instalador correctamente
+![](Captura1.PNG)
+La instalación comienza correctamente
+![](Captura4.PNG)
+Introduzco el usuario de la base de datos creado anteriormente
+![](Captura5.PNG)
+Registro un nombre de usuario
+![](Captura7.PNG)
 Usuario: user
 Contraseña: alumno2022
+La instalación se realiza correctamente
+![](Captura10.PNG)
+Accedo a la wiki con el usuario creado
+![](Captura11.PNG)
 Una vez finalizada la instalación descargo el archivo de configuración LocalSettings.php y lo muevo a su ubicación definitiva
 ```
 sudo mv LocalSettings.php /var/www/html/mediawiki-1.37.2/
@@ -169,6 +181,8 @@ Habilito el servicio creado y lo inicio
 sudo systemctl enable bluelog
 sudo systemctl start bluelog
 ```
+Compruebo que el servicio funciona correctamente
+![](Captura12.PNG)
 Cambio la configuración de vagrant y reinicio la máquina virtual para que todos los accesos sean a través de apache
 ```
 config.vm.network "forwarded_port", guest: 80, host: 8000
@@ -177,11 +191,9 @@ Reinicio vagrant y compruebo que funciona en la dirección
 ```
 http://blog.miempresa.com:8000/
 ```
-
-
-
-
-
-
-
-
+## Página web inicial
+Creo los virtual host con los nombres indicados en la tarea y edito el index.html para mostrar el contenido
+Edito el index.html para mostrar el contenido de la página
+![](Captura14.PNG)
+El blog es accesible en la dirección http://blog.miempresa.com:8000/
+![](Captura13.PNG)
